@@ -25,7 +25,8 @@ class ChatProtocol(LineReceiver):
 	def line_TYPE(self,line):
 		if line[0] == '\\':
 			return self.handle_CMD(line)
-		return self.handle_CHAT(line)
+		else:
+			return self.handle_CHAT(line)
 	
 	def handle_REGISTER(self, name):
 		if name in self.factory.users:
@@ -51,7 +52,8 @@ class ChatProtocol(LineReceiver):
 		if message[1:] == 'users':
 			for name, protocol in self.factory.users.iteritems():
 				self.sendLine(name)
-		self.handle_CHAT(message)
+		else:
+			self.handle_CHAT(message)
 
 
 class ChatFactory(Factory):
