@@ -23,7 +23,7 @@ class ChatProtocol(LineReceiver):
 			self.line_TYPE(line)
 
 	def line_TYPE(self,line):
-		if line[0] == '\\':
+		if line[0] == '/':
 			return self.handle_CMD(line)
 		else:
 			return self.handle_CHAT(line)
@@ -42,18 +42,29 @@ class ChatProtocol(LineReceiver):
 	def handle_CHAT(self, message):
 		message = "<%s> %s" % (self.name, message)
 		self.broadcastMessage(message)
+
+	def handle_CMD(self,message):
+		cmd = message.split()[0][1:]
+		try:
+			arg = message.split()[1]
+		except:
+			pass
+
+		if cmd == 'users':
+			for name, protocol in self.factory.users.iteritems():
+				self.sendLine(name)
+		elif cmd == 'nick':
+			self.factory.users[arg] = self.factory.users.pop(self.name)
+			self.name = arg
+			message = "Voce mudou seu nick para: %s" % self.name
+			self.sendLine(message)
+		else:
+			self.handle_CHAT(message)
 	
 	def broadcastMessage(self, message):
 		for name, protocol in self.factory.users.iteritems():
 			if protocol != self:
 				protocol.sendLine(message)
-
-	def handle_CMD(self,message):
-		if message[1:] == 'users':
-			for name, protocol in self.factory.users.iteritems():
-				self.sendLine(name)
-		else:
-			self.handle_CHAT(message)
 
 
 class ChatFactory(Factory):
