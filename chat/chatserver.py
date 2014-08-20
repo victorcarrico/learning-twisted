@@ -1,6 +1,10 @@
+import os
+
 from twisted.internet.protocol import Factory
 from twisted.protocols.basic import LineReceiver
 from twisted.internet import reactor
+
+PORT = os.environ['PORT']
 
 class ChatProtocol(LineReceiver):
 	def __init__(self, factory):
@@ -74,5 +78,5 @@ class ChatFactory(Factory):
 	def buildProtocol(self, addr):
 		return ChatProtocol(self)
 
-reactor.listenTCP(22, ChatFactory())
+reactor.listenTCP(PORT, ChatFactory())
 reactor.run()
