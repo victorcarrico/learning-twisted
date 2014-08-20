@@ -78,5 +78,5 @@ class ChatFactory(Factory):
 	def buildProtocol(self, addr):
 		return ChatProtocol(self)
 
-reactor.listenTCP(PORT, ChatFactory())
+reactor.listenTCP(int(PORT), ChatFactory())
 reactor.run()
